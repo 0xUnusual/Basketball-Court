@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Basketball Court - Gestión de liga de baloncesto. Cola de jugadores, quintetos automáticos y marcador por jugador." />
+  <title>Basketball Court</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- PARTICLES BACKGROUND -->
+  <div class="particles" id="particles"></div>
+
+  <!-- CONFETTI CONTAINER -->
+  <div class="confetti-container" id="confetti-container"></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🏀</span>
+        <span class="logo-text">Basketball <span class="logo-accent">Court</span></span>
+      </div>
+      <div class="header-stats">
+        <div class="stat-chip" id="stat-players-total">
+          <span class="chip-icon">👥</span>
+          <span class="chip-label">Asistentes</span>
+          <span class="chip-value" id="hdr-total">0</span>
+        </div>
+        <div class="stat-chip" id="stat-in-queue">
+          <span class="chip-icon">⏳</span>
+          <span class="chip-label">En cola</span>
+          <span class="chip-value" id="hdr-queue">0</span>
+        </div>
+        <div class="stat-chip" id="stat-matches">
+          <span class="chip-icon">🏆</span>
+          <span class="chip-label">Partidos</span>
+          <span class="chip-value" id="hdr-matches">0</span>
+        </div>
+        <button class="btn-theme-toggle" id="btn-theme-toggle" title="Cambiar tema">
+          <span class="theme-icon">☀️</span> <span class="theme-text">Claro</span>
+        </button>
+        <button class="btn-reset" id="btn-reset-day" title="Reiniciar el día">
+          <span>↺</span> Reset Día
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="main-layout">
+
+    <!-- ====================== PANEL IZQUIERDO: COLA ====================== -->
+    <section class="panel panel-queue" aria-label="Cola de jugadores">
+      <div class="panel-header">
+        <h2 class="panel-title"><span class="panel-icon">📋</span> Lista de Asistencia</h2>
+        <span class="badge" id="badge-queue">0</span>
+      </div>
+
+      <!-- Añadir jugador -->
+      <div class="add-player-form">
+        <div class="input-group">
+          <input
+            type="text"
+            id="player-name-input"
+            class="player-input"
+            placeholder="Nombre del jugador..."
+            maxlength="30"
+            autocomplete="off"
+          />
+          <button class="btn-add" id="btn-add-player" title="Agregar jugador">
+            <span class="btn-add-icon">+</span>
+          </button>
+        </div>
+        <p class="input-hint">Presiona Enter o el botón + para agregar</p>
+      </div>
+
+      <!-- Lista de jugadores en cola -->
+      <div class="queue-list-container">
+        <div class="queue-empty" id="queue-empty">
+          <span class="empty-icon">🏀</span>
+          <p>Añade jugadores para comenzar</p>
+        </div>
+        <div class="queue-list" id="queue-list">
+          <!-- Items generados por JS -->
+        </div>
+      </div>
+
+      <!-- Botón generar primer partido -->
+      <div class="generate-section">
+        <button class="btn-generate" id="btn-generate-match" disabled>
+          <span class="btn-icon">⚡</span>
+          <span>Generar Partido</span>
+        </button>
+        <p class="generate-hint" id="generate-hint">Necesitas al menos 10 jugadores en cola</p>
+      </div>
+    </section>
+
+    <!-- ====================== PANEL CENTRAL: CANCHA ====================== -->
+    <section class="panel panel-court" aria-label="Partido en curso">
+
+      <!-- Estado: sin partido -->
+      <div class="court-idle" id="court-idle">
+        <div class="idle-content">
+          <div class="idle-ball">🏀</div>
+          <h2 class="idle-title">¡Cancha Vacía!</h2>
+          <p class="idle-sub">Añade jugadores y genera el primer partido para comenzar</p>
+        </div>
+      </div>
+
+      <!-- Estado: partido en curso -->
+      <div class="court-active" id="court-active" style="display:none;">
+
+        <!-- Cabecera del partido -->
+        <div class="match-header">
+          <div class="match-meta">
+            <span class="match-label">PARTIDO EN CURSO</span>
+            <span class="match-number" id="match-number">#1</span>
+          </div>
+          <div class="defender-badge" id="defender-badge" style="display:none;">
+            <span>🏆 Defensor</span>
+          </div>
+        </div>
+
+        <!-- SCOREBOARD PRINCIPAL -->
+        <div class="scoreboard">
+          <!-- Equipo A -->
+          <div class="score-block team-a">
+            <div class="team-name" id="score-name-a">Equipo A</div>
+            <div class="score-number" id="score-a">0</div>
+          </div>
+
+          <!-- Separador -->
+          <div class="score-sep">
+            <div class="score-vs">VS</div>
+            <div class="score-timer" id="match-timer">00:00</div>
+            <div class="timer-controls">
+              <button class="btn-timer-ctrl" id="btn-timer-toggle" title="Iniciar/Pausar Reloj">⏸️ Pausa</button>
+              <button class="btn-timer-ctrl" id="btn-timer-reset" title="Reiniciar Reloj">⏱️ Reset</button>
+            </div>
+          </div>
+
+          <!-- Equipo B -->
+          <div class="score-block team-b">
+            <div class="team-name" id="score-name-b">Equipo B</div>
+            <div class="score-number" id="score-b">0</div>
+          </div>
+        </div>
+
+        <!-- EQUIPOS Y PUNTUACIÓN POR JUGADOR -->
+        <div class="teams-container">
+
+          <!-- Equipo A -->
+          <div class="team-card team-card-a" id="team-card-a">
+            <div class="team-card-header">
+              <div class="tch-main">
+                <span class="team-tag tag-a">RETADOR</span>
+                <span class="team-card-title" id="team-a-title">Equipo A</span>
+              </div>
+              <div class="team-fouls-container" id="fouls-container-a">
+                <span class="bonus-badge" id="bonus-badge-a">BONUS</span>
+                <span class="foul-label">Faltas:</span>
+                <button class="btn-foul-ctrl" id="btn-foul-minus-a" title="Restar Falta">-</button>
+                <span class="foul-count" id="foul-count-a">0</span>
+                <button class="btn-foul-ctrl" id="btn-foul-plus-a" title="Sumar Falta">+</button>
+              </div>
+            </div>
+            <ul class="player-score-list" id="team-a-players">
+              <!-- generado por JS -->
+            </ul>
+            <div class="team-win-btn-wrap">
+              <button class="btn-win btn-win-a" id="btn-win-a">
+                🏆 Ganó Equipo A
+              </button>
+            </div>
+          </div>
+
+          <!-- Equipo B -->
+          <div class="team-card team-card-b" id="team-card-b">
+            <div class="team-card-header">
+              <div class="tch-main">
+                <span class="team-tag tag-b">DEFENSOR</span>
+                <span class="team-card-title" id="team-b-title">Equipo B</span>
+              </div>
+              <div class="team-fouls-container" id="fouls-container-b">
+                <span class="bonus-badge" id="bonus-badge-b">BONUS</span>
+                <span class="foul-label">Faltas:</span>
+                <button class="btn-foul-ctrl" id="btn-foul-minus-b" title="Restar Falta">-</button>
+                <span class="foul-count" id="foul-count-b">0</span>
+                <button class="btn-foul-ctrl" id="btn-foul-plus-b" title="Sumar Falta">+</button>
+              </div>
+            </div>
+            <ul class="player-score-list" id="team-b-players">
+              <!-- generado por JS -->
+            </ul>
+            <div class="team-win-btn-wrap">
+              <button class="btn-win btn-win-b" id="btn-win-b">
+                🏆 Ganó Equipo B
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Nota de puntuación -->
+        <p class="scoring-hint">Toca los botones +1, +2, +3 junto al nombre del jugador para registrar puntos</p>
+
+      </div>
+
+    </section>
+
+    <!-- ====================== PANEL DERECHO: HISTORIAL ====================== -->
+    <section class="panel panel-history" aria-label="Historial de partidos">
+      <div class="panel-header">
+        <h2 class="panel-title"><span class="panel-icon">📊</span> Historial</h2>
+        <span class="badge" id="badge-history">0</span>
+      </div>
+
+      <div class="history-empty" id="history-empty">
+        <span class="empty-icon">📋</span>
+        <p>Los partidos finalizados aparecerán aquí</p>
+      </div>
+      <div class="history-list" id="history-list">
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: GANADOR -->
+  <div class="modal-overlay" id="winner-modal" aria-modal="true" role="dialog" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-trophy">🏆</div>
+      <h2 class="modal-title" id="modal-winner-name">¡Equipo A Ganó!</h2>
+      <p class="modal-sub" id="modal-winner-sub">El retador se prepara...</p>
+      <div class="modal-score-summary" id="modal-score-summary"></div>
+      <div class="modal-players" id="modal-winner-players"></div>
+      <button class="btn-modal-continue" id="btn-modal-continue">
+        ⚡ Continuar al siguiente partido
+      </button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
