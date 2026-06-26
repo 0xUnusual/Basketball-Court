@@ -54,7 +54,7 @@
   <main class="main-layout">
 
     <!-- ====================== PANEL IZQUIERDO: COLA ====================== -->
-    <section class="panel panel-queue" aria-label="Cola de jugadores">
+    <section class="panel panel-queue active-tab" id="panel-queue" aria-label="Cola de jugadores">
       <div class="panel-header">
         <h2 class="panel-title"><span class="panel-icon">📋</span> Lista de Asistencia</h2>
         <span class="badge" id="badge-queue">0</span>
@@ -100,7 +100,7 @@
     </section>
 
     <!-- ====================== PANEL CENTRAL: CANCHA ====================== -->
-    <section class="panel panel-court" aria-label="Partido en curso">
+    <section class="panel panel-court" id="panel-court" aria-label="Partido en curso">
 
       <!-- Estado: sin partido -->
       <div class="court-idle" id="court-idle">
@@ -213,7 +213,7 @@
     </section>
 
     <!-- ====================== PANEL DERECHO: HISTORIAL ====================== -->
-    <section class="panel panel-history" aria-label="Historial de partidos">
+    <section class="panel panel-history" id="panel-history" aria-label="Historial de partidos">
       <div class="panel-header">
         <h2 class="panel-title"><span class="panel-icon">📊</span> Historial</h2>
         <span class="badge" id="badge-history">0</span>
@@ -245,6 +245,22 @@
 
   <!-- TOAST NOTIFICATIONS -->
   <div class="toast-container" id="toast-container"></div>
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <button class="mobile-nav-btn active" data-target="queue">
+      <span class="nav-icon">📋</span>
+      <span class="nav-text">Cola</span>
+    </button>
+    <button class="mobile-nav-btn" data-target="court">
+      <span class="nav-icon">🏀</span>
+      <span class="nav-text">Cancha</span>
+    </button>
+    <button class="mobile-nav-btn" data-target="history">
+      <span class="nav-icon">📊</span>
+      <span class="nav-text">Historial</span>
+    </button>
+  </nav>
 
   <script src="app.js"></script>
 </body>

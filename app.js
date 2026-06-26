@@ -859,6 +859,22 @@ function initEventListeners() {
 
   // Cambiar tema
   document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
+
+  // Control de pestañas móviles (Responsive Navigation)
+  document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget.dataset.target;
+      
+      // Actualizar botones activos
+      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      
+      // Actualizar paneles activos
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active-tab'));
+      const activePanel = document.getElementById(`panel-${target}`);
+      if (activePanel) activePanel.classList.add('active-tab');
+    });
+  });
 }
 
 /* ============================================================

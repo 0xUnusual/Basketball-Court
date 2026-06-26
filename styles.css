@@ -897,3 +897,84 @@ body.light-theme {
 body.light-theme .btn-theme-toggle:hover {
   color: var(--orange-dark);
 }
+
+/* ============================================================
+   MOBILE BOTTOM NAVIGATION & RESPONSIVE TABS
+   ============================================================ */
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--bg-panel);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    z-index: 500;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+  }
+  
+  .mobile-nav-btn {
+    flex: 1;
+    height: 100%;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .mobile-nav-btn .nav-icon {
+    font-size: 1.15rem;
+    transition: var(--transition);
+  }
+  
+  .mobile-nav-btn.active {
+    color: var(--orange);
+  }
+  
+  .mobile-nav-btn.active .nav-icon {
+    transform: translateY(-2px) scale(1.1);
+    filter: drop-shadow(0 0 6px var(--orange-glow));
+  }
+  
+  /* Layout modifications for responsive tab panels */
+  .main-layout {
+    grid-template-columns: 1fr !important;
+    padding: 12px 12px 76px !important; /* space for bottom navigation bar */
+    gap: 0;
+  }
+  
+  .panel {
+    display: none !important;
+    max-height: none !important;
+    width: 100% !important;
+    border-radius: var(--radius-xl) !important;
+  }
+  
+  .panel.active-tab {
+    display: flex !important;
+  }
+
+  .panel-queue {
+    position: static !important;
+  }
+  
+  .panel-history {
+    position: static !important;
+  }
+}
+
