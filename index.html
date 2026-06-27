@@ -136,7 +136,12 @@
           <!-- Separador -->
           <div class="score-sep">
             <div class="score-vs">VS</div>
-            <div class="score-timer" id="match-timer">00:00</div>
+            <div class="timers-row">
+              <div class="score-timer" id="match-timer">00:00</div>
+              <div class="shot-clock-box">
+                <div class="shot-clock" id="shot-clock">--</div>
+              </div>
+            </div>
             <div class="timer-controls">
               <button class="btn-timer-ctrl" id="btn-timer-toggle" title="Iniciar/Pausar Reloj">⏸️ Pausa</button>
               <button class="btn-timer-ctrl" id="btn-timer-reset" title="Reiniciar Reloj">⏱️ Reset</button>
@@ -147,13 +152,12 @@
               <button class="btn-timer-preset" id="btn-preset-1" title="Cuenta atrás 1 min">⏱️ 1m</button>
               <button class="btn-timer-preset" id="btn-preset-10s" title="Cuenta atrás 10 seg">⏱️ 10s</button>
             </div>
-            <div class="timer-adjust">
-              <button class="btn-timer-adjust" id="btn-adjust-plus-min" title="Adelantar 1 minuto">+1m</button>
-              <button class="btn-timer-adjust" id="btn-adjust-plus-sec" title="Adelantar 10 segundos">+10s</button>
-            </div>
-            <div class="shot-clock-wrap" id="shot-clock-wrap">
-              <div class="shot-clock" id="shot-clock">24</div>
-              <div class="shot-clock-controls">
+            <div class="controls-adjust-row">
+              <div class="adjust-group">
+                <button class="btn-timer-adjust" id="btn-adjust-plus-min" title="Adelantar 1 minuto">+1m</button>
+                <button class="btn-timer-adjust" id="btn-adjust-plus-sec" title="Adelantar 10 segundos">+10s</button>
+              </div>
+              <div class="shot-group">
                 <button class="btn-shot-ctrl" id="btn-shot-24" title="Reiniciar a 24 segundos">24s</button>
                 <button class="btn-shot-ctrl" id="btn-shot-14" title="Reiniciar a 14 segundos">14s</button>
               </div>
