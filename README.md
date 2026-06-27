@@ -24,6 +24,28 @@ Con una regla clara: **"el equipo ganador se queda en cancha y el perdedor va al
     *   **Registro de Anotación Individual:** Botones de `+1`, `+2` y `+3` junto al nombre de cada jugador. Los puntos individuales se suman al marcador global del equipo al instante.
     *   Indicador visual de **Equipo Defensor** (ganador del partido anterior) y **Equipo Retador**.
 
+*   **⏱️ Reloj de Partido & Cuenta Regresiva:**
+    *   Botones de preselección para programar **cuenta regresiva** de **10m**, **12m**, **1m** y **10s**.
+    *   Botones de ajuste manual (`+1m` y `+10s`) para añadir o restaurar tiempo sobre la marcha.
+    *   Alerta visual crítica: El cronómetro late y brilla en rojo neón cuando la cuenta regresiva es de menos de 10 segundos.
+
+*   **⏱️ Reloj de Posesión (Shot Clock):**
+    *   Reloj de posesión de 24 y 14 segundos integrado para arbitraje rápido.
+    *   **Activación condicional**: Inicia apagado (`--`) y no descuenta segundos hasta que se establezca explícitamente (`24s` o `14s`).
+    *   Detiene automáticamente el cronómetro principal al expirar la posesión con una alerta visual.
+    *   Parpadeo de advertencia en rojo cuando queden 5 segundos o menos de posesión.
+
+*   **🔄 Sistema de Sustituciones (Cambios en cancha):**
+    *   Botón integrado (`🔄`) junto a cada jugador activo en cancha.
+    *   Modal interactivo para elegir un reemplazo entre los jugadores de la cola de espera.
+    *   El jugador saliente se reincorpora automáticamente al final de la cola.
+
+*   **📤 Compartir Resumen del Día (WhatsApp):**
+    *   Botón `📤 Resumen` en el panel de Historial.
+    *   Genera un reporte del día formateado con emojis para copiar al portapapeles.
+    *   Incluye total de partidos, marcadores detallados, y calcula el **MVP del Día** (el jugador con más puntos totales acumulados en la jornada).
+    *   Redirección directa a WhatsApp para compartir con tu grupo de juego.
+
 *   **🔴 Gestión de Faltas & Sistema de BONUS:**
     *   Control de faltas del equipo (`-` / `+`).
     *   Cuando un equipo acumula **5 faltas o más**, la tarjeta del equipo se tiñe de color rojo resplandeciente y se activa un aviso parpadeante de **BONUS** (situación de penalización).
