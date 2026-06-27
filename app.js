@@ -37,6 +37,7 @@ const state = {
   timerRunning:  false,
   matchActive:   false,
   theme:         'dark',
+  isCountdown:   false,
 };
 
 /* ============================================================
@@ -62,6 +63,7 @@ function saveState() {
     timerRunning:  state.timerRunning,
     matchActive:   state.matchActive,
     theme:         state.theme,
+    isCountdown:   state.isCountdown,
   };
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch(e) {}
 }
@@ -159,12 +161,26 @@ function initParticles() {
    TIMER
    ============================================================ */
 function startTimer(resetSeconds = true) {
-  if (resetSeconds) state.timerSeconds = 0;
+  if (resetSeconds) {
+    state.timerSeconds = 0;
+    state.isCountdown = false;
+  }
   clearInterval(state.timerInterval);
   state.timerRunning = true;
   updateTimerUI();
   state.timerInterval = setInterval(() => {
-    state.timerSeconds++;
+    if (state.isCountdown) {
+      if (state.timerSeconds > 0) {
+        state.timerSeconds--;
+      }
+      if (state.timerSeconds <= 0) {
+        state.timerSeconds = 0;
+        stopTimer();
+        showToast('⏳ ¡Tiempo de juego finalizado!', 'info', 5000);
+      }
+    } else {
+      state.timerSeconds++;
+    }
     document.getElementById('match-timer').textContent = formatTime(state.timerSeconds);
   }, 1000);
 }
@@ -200,8 +216,33 @@ function toggleTimer() {
 function resetTimer() {
   if (!state.matchActive) return;
   state.timerSeconds = 0;
+  state.isCountdown = false;
   document.getElementById('match-timer').textContent = formatTime(0);
   saveState();
+}
+
+function setPresetTimer(minutes) {
+  if (!state.matchActive) {
+    showToast('Inicia un partido antes de programar el reloj', 'error');
+    return;
+  }
+  state.timerSeconds = minutes * 60;
+  state.isCountdown = true;
+  document.getElementById('match-timer').textContent = formatTime(state.timerSeconds);
+  saveState();
+  showToast(`⏱️ Cuenta atrás programada a ${minutes} minutos`, 'success');
+}
+
+function adjustTimerTime(secondsToAdd) {
+  if (!state.matchActive) {
+    showToast('Inicia un partido antes de ajustar el reloj', 'error');
+    return;
+  }
+  state.timerSeconds = Math.max(0, state.timerSeconds + secondsToAdd);
+  document.getElementById('match-timer').textContent = formatTime(state.timerSeconds);
+  saveState();
+  const displaySign = secondsToAdd > 0 ? '+' : '';
+  showToast(`⏱️ Tiempo ajustado: ${displaySign}${secondsToAdd}s`, 'info');
 }
 
 /* ============================================================
@@ -848,6 +889,10 @@ function initEventListeners() {
   // Reloj de partido
   document.getElementById('btn-timer-toggle').addEventListener('click', toggleTimer);
   document.getElementById('btn-timer-reset').addEventListener('click', resetTimer);
+  document.getElementById('btn-preset-10').addEventListener('click', () => setPresetTimer(10));
+  document.getElementById('btn-preset-12').addEventListener('click', () => setPresetTimer(12));
+  document.getElementById('btn-adjust-plus-min').addEventListener('click', () => adjustTimerTime(60));
+  document.getElementById('btn-adjust-plus-sec').addEventListener('click', () => adjustTimerTime(10));
 
   // Faltas de equipo A
   document.getElementById('btn-foul-plus-a').addEventListener('click', () => adjustFouls('a', 1));

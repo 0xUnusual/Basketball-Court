@@ -802,6 +802,28 @@ body.light-theme {
 }
 .btn-timer-ctrl:active { transform: translateY(0); }
 
+.timer-presets, .timer-adjust {
+  display: flex; gap: 8px; margin-top: 6px; justify-content: center;
+}
+.btn-timer-preset, .btn-timer-adjust {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 0.72rem; font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex; align-items: center; gap: 4px;
+}
+.btn-timer-preset:hover, .btn-timer-adjust:hover {
+  background: rgba(255,107,26,0.15);
+  border-color: var(--orange);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.btn-timer-preset:active, .btn-timer-adjust:active { transform: translateY(0); }
+
 /* ============================================================
    TEAM FOULS & BONUS STATE
    ============================================================ */
