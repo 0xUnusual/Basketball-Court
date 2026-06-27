@@ -233,7 +233,10 @@
     <section class="panel panel-history" id="panel-history" aria-label="Historial de partidos">
       <div class="panel-header">
         <h2 class="panel-title"><span class="panel-icon">📊</span> Historial</h2>
-        <span class="badge" id="badge-history">0</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn-share-history" id="btn-share-day" title="Compartir resumen del día">📤 Resumen</button>
+          <span class="badge" id="badge-history">0</span>
+        </div>
       </div>
 
       <div class="history-empty" id="history-empty">

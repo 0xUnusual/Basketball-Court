@@ -550,10 +550,134 @@ function renderPlayerScoreList(containerId, players, team) {
       btns.appendChild(btn);
     });
 
+    const swapBtn = document.createElement('button');
+    swapBtn.className = 'btn-swap-player';
+    swapBtn.title = 'Sustituir jugador';
+    swapBtn.innerHTML = '🔄';
+    swapBtn.addEventListener('click', () => promptSubstitution(player, team));
+
+    li.appendChild(swapBtn);
     li.appendChild(nameEl);
     li.appendChild(ptsEl);
     li.appendChild(btns);
     ul.appendChild(li);
+  });
+}
+
+function promptSubstitution(playerOut, team) {
+  // Get waiting players
+  const onCourt = [...state.teamA, ...state.teamB];
+  const waiting = state.queue.filter(p => !onCourt.includes(p));
+  
+  if (waiting.length === 0) {
+    showToast('No hay jugadores en espera en la lista de asistencia', 'error');
+    return;
+  }
+  
+  // Create overlay sub dialog
+  const dialog = document.createElement('div');
+  dialog.className = 'modal-overlay sub-modal';
+  dialog.style.zIndex = '1010'; // Ensure it sits above standard overlays
+  dialog.innerHTML = `
+    <div class="modal-card">
+      <div class="modal-trophy">🔄</div>
+      <h2 class="modal-title" style="font-size: 1.6rem; margin-bottom: 8px;">Sustituir Jugador</h2>
+      <p class="modal-sub">Selecciona quién entrará a la cancha en reemplazo de <strong>${playerOut}</strong>:</p>
+      <div class="sub-players-list">
+        ${waiting.map(p => `<button class="btn-sub-select" data-player="${p}">${p}</button>`).join('')}
+      </div>
+      <button class="btn-modal-cancel" style="margin-top: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-secondary); width: 100%; padding: 12px 20px; border-radius: var(--radius-md); font-weight: 700; cursor: pointer; transition: var(--transition);">
+        Cancelar
+      </button>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  
+  // Handlers
+  dialog.querySelectorAll('.btn-sub-select').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const playerIn = e.target.dataset.player;
+      performSubstitution(playerOut, playerIn, team);
+      dialog.remove();
+    });
+  });
+  
+  dialog.querySelector('.btn-modal-cancel').addEventListener('click', () => dialog.remove());
+}
+
+function performSubstitution(playerOut, playerIn, team) {
+  // Swap rosters
+  if (team === 'a') {
+    state.teamA = state.teamA.map(p => p === playerOut ? playerIn : p);
+  } else {
+    state.teamB = state.teamB.map(p => p === playerOut ? playerIn : p);
+  }
+  
+  // Initialize new player's score to 0 if not tracked
+  if (!(playerIn in state.playerScores)) {
+    state.playerScores[playerIn] = 0;
+  }
+  
+  // Re-queue the swapped-out player to the end, and remove playerIn from queue
+  state.queue = state.queue.filter(p => p !== playerIn);
+  state.queue.push(playerOut);
+  
+  saveState();
+  renderQueue();
+  renderCourt();
+  showToast(`🔄 ${playerIn} ha ingresado por ${playerOut}`, 'success');
+}
+
+function getMVPOfDay() {
+  if (state.matchHistory.length === 0) return null;
+  const totalPoints = {};
+  state.matchHistory.forEach(match => {
+    Object.entries(match.playerScores).forEach(([player, pts]) => {
+      totalPoints[player] = (totalPoints[player] || 0) + pts;
+    });
+  });
+  let mvp = null;
+  let maxPts = -1;
+  Object.entries(totalPoints).forEach(([player, pts]) => {
+    if (pts > maxPts) {
+      maxPts = pts;
+      mvp = { name: player, pts: pts };
+    }
+  });
+  return mvp;
+}
+
+function shareDaySummary() {
+  if (state.matchHistory.length === 0) {
+    showToast('Aún no hay partidos jugados hoy para compartir', 'error');
+    return;
+  }
+  
+  const mvp = getMVPOfDay();
+  let text = `🏀 *BASKETBALL COURT - RESUMEN DEL DÍA* 🏀\n`;
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  text += `🏆 *Partidos jugados:* ${state.matchHistory.length}\n\n`;
+  
+  text += `*Resultados:*\n`;
+  state.matchHistory.forEach(match => {
+    text += `• Partido #${match.number}: Equipo A (${match.scoreA}) vs Equipo B (${match.scoreB}) → Ganador: *Equipo ${match.winner}* 🏆\n`;
+  });
+  text += `\n`;
+  
+  if (mvp && mvp.pts > 0) {
+    text += `⭐ *MVP del Día:* ${mvp.name} con *${mvp.pts} pts* totales anotados. 🔥\n`;
+  }
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  text += `Generado desde Basketball Court.`;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 ¡Resumen copiado al portapapeles! Abriendo WhatsApp...', 'success', 4000);
+    setTimeout(() => {
+      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+      window.open(whatsappUrl, '_blank');
+    }, 1000);
+  }).catch(() => {
+    showToast('Error al copiar al portapapeles. Inténtalo de nuevo.', 'error');
   });
 }
 
@@ -984,6 +1108,9 @@ function initEventListeners() {
 
   // Cambiar tema
   document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
+
+  // Compartir resumen del día
+  document.getElementById('btn-share-day').addEventListener('click', shareDaySummary);
 
   // Control de pestañas móviles (Responsive Navigation)
   document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
