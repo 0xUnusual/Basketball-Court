@@ -10,4 +10,6 @@
 - [x] Verify list-all match history display
 - [x] Add countdown timer presets (10 and 12 minutes)
 - [x] Add time adjustments (+1m and +10s) to advance/restore time
+- [x] Add 24s/14s Shot Clock (Reloj de Posesión) with quick reset controls
+- [x] Add visual warning alert (blink/pulse) on critical countdown time (< 10 seconds)
 - [x] Verify in browser

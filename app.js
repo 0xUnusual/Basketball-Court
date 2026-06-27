@@ -38,6 +38,8 @@ const state = {
   matchActive:   false,
   theme:         'dark',
   isCountdown:   false,
+  shotClockSeconds: 24,
+  shotClockActive: false,
 };
 
 /* ============================================================
@@ -64,6 +66,8 @@ function saveState() {
     matchActive:   state.matchActive,
     theme:         state.theme,
     isCountdown:   state.isCountdown,
+    shotClockSeconds: state.shotClockSeconds,
+    shotClockActive: state.shotClockActive,
   };
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave)); } catch(e) {}
 }
@@ -164,11 +168,17 @@ function startTimer(resetSeconds = true) {
   if (resetSeconds) {
     state.timerSeconds = 0;
     state.isCountdown = false;
+    state.shotClockSeconds = 24;
+    state.shotClockActive = false;
   }
   clearInterval(state.timerInterval);
   state.timerRunning = true;
   updateTimerUI();
+  updateShotClockUI();
+  updateMatchTimerUI();
+  
   state.timerInterval = setInterval(() => {
+    // Game clock decrement/increment
     if (state.isCountdown) {
       if (state.timerSeconds > 0) {
         state.timerSeconds--;
@@ -181,7 +191,20 @@ function startTimer(resetSeconds = true) {
     } else {
       state.timerSeconds++;
     }
-    document.getElementById('match-timer').textContent = formatTime(state.timerSeconds);
+    
+    // Shot clock decrement (only if active)
+    if (state.shotClockActive && state.shotClockSeconds > 0) {
+      state.shotClockSeconds--;
+      if (state.shotClockSeconds <= 0) {
+        state.shotClockSeconds = 0;
+        state.shotClockActive = false;
+        stopTimer();
+        showToast('⏱️ ¡Violación de Posesión (24s)!', 'error', 4000);
+      }
+    }
+    
+    updateShotClockUI();
+    updateMatchTimerUI();
   }, 1000);
 }
 
@@ -217,20 +240,29 @@ function resetTimer() {
   if (!state.matchActive) return;
   state.timerSeconds = 0;
   state.isCountdown = false;
-  document.getElementById('match-timer').textContent = formatTime(0);
+  state.shotClockSeconds = 24;
+  state.shotClockActive = false;
+  updateShotClockUI();
+  updateMatchTimerUI();
   saveState();
 }
 
-function setPresetTimer(minutes) {
+function setPresetTimer(seconds) {
   if (!state.matchActive) {
     showToast('Inicia un partido antes de programar el reloj', 'error');
     return;
   }
-  state.timerSeconds = minutes * 60;
+  state.timerSeconds = seconds;
   state.isCountdown = true;
-  document.getElementById('match-timer').textContent = formatTime(state.timerSeconds);
+  state.shotClockSeconds = 24; // Reset shot clock too
+  state.shotClockActive = false; // Remains inactive until set
+  updateShotClockUI();
+  updateMatchTimerUI();
   saveState();
-  showToast(`⏱️ Cuenta atrás programada a ${minutes} minutos`, 'success');
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  const timeStr = m > 0 ? `${m}m` : `${s}s`;
+  showToast(`⏱️ Cuenta atrás programada a ${timeStr}`, 'success');
 }
 
 function adjustTimerTime(secondsToAdd) {
@@ -239,10 +271,52 @@ function adjustTimerTime(secondsToAdd) {
     return;
   }
   state.timerSeconds = Math.max(0, state.timerSeconds + secondsToAdd);
-  document.getElementById('match-timer').textContent = formatTime(state.timerSeconds);
+  updateMatchTimerUI();
   saveState();
   const displaySign = secondsToAdd > 0 ? '+' : '';
   showToast(`⏱️ Tiempo ajustado: ${displaySign}${secondsToAdd}s`, 'info');
+}
+
+function resetShotClock(seconds) {
+  if (!state.matchActive) {
+    showToast('Inicia un partido antes de reiniciar posesión', 'error');
+    return;
+  }
+  state.shotClockSeconds = seconds;
+  state.shotClockActive = true; // Actives shot clock!
+  updateShotClockUI();
+  saveState();
+  showToast(`🏀 Posesión iniciada a ${seconds}s`, 'success');
+}
+
+function updateShotClockUI() {
+  const el = document.getElementById('shot-clock');
+  if (el) {
+    if (state.shotClockActive) {
+      el.textContent = state.shotClockSeconds;
+      el.classList.remove('inactive');
+    } else {
+      el.textContent = state.shotClockSeconds === 0 ? '0' : '--';
+      el.classList.add('inactive');
+    }
+    if (state.shotClockActive && state.shotClockSeconds <= 5) {
+      el.classList.add('critical');
+    } else {
+      el.classList.remove('critical');
+    }
+  }
+}
+
+function updateMatchTimerUI() {
+  const el = document.getElementById('match-timer');
+  if (el) {
+    el.textContent = formatTime(state.timerSeconds);
+    if (state.isCountdown && state.timerSeconds <= 10 && state.timerSeconds > 0) {
+      el.classList.add('timer-critical');
+    } else {
+      el.classList.remove('timer-critical');
+    }
+  }
 }
 
 /* ============================================================
@@ -402,6 +476,8 @@ function renderCourt() {
   // Update fouls UI
   updateFoulsUI();
   updateTimerUI();
+  updateShotClockUI();
+  updateMatchTimerUI();
 
   // Team A players
   renderPlayerScoreList('team-a-players', state.teamA, 'a');
@@ -889,10 +965,14 @@ function initEventListeners() {
   // Reloj de partido
   document.getElementById('btn-timer-toggle').addEventListener('click', toggleTimer);
   document.getElementById('btn-timer-reset').addEventListener('click', resetTimer);
-  document.getElementById('btn-preset-10').addEventListener('click', () => setPresetTimer(10));
-  document.getElementById('btn-preset-12').addEventListener('click', () => setPresetTimer(12));
+  document.getElementById('btn-preset-10').addEventListener('click', () => setPresetTimer(10 * 60));
+  document.getElementById('btn-preset-12').addEventListener('click', () => setPresetTimer(12 * 60));
+  document.getElementById('btn-preset-1').addEventListener('click', () => setPresetTimer(1 * 60));
+  document.getElementById('btn-preset-10s').addEventListener('click', () => setPresetTimer(10));
   document.getElementById('btn-adjust-plus-min').addEventListener('click', () => adjustTimerTime(60));
   document.getElementById('btn-adjust-plus-sec').addEventListener('click', () => adjustTimerTime(10));
+  document.getElementById('btn-shot-24').addEventListener('click', () => resetShotClock(24));
+  document.getElementById('btn-shot-14').addEventListener('click', () => resetShotClock(14));
 
   // Faltas de equipo A
   document.getElementById('btn-foul-plus-a').addEventListener('click', () => adjustFouls('a', 1));
@@ -937,6 +1017,8 @@ function init() {
   } else {
     state.timerRunning = false;
     updateTimerUI();
+    updateShotClockUI();
+    updateMatchTimerUI();
   }
 
   renderQueue();

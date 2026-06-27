@@ -803,7 +803,7 @@ body.light-theme {
 .btn-timer-ctrl:active { transform: translateY(0); }
 
 .timer-presets, .timer-adjust {
-  display: flex; gap: 8px; margin-top: 6px; justify-content: center;
+  display: flex; gap: 8px; margin-top: 6px; justify-content: center; flex-wrap: wrap;
 }
 .btn-timer-preset, .btn-timer-adjust {
   background: rgba(255,255,255,0.05);
@@ -823,6 +823,74 @@ body.light-theme {
   transform: translateY(-1px);
 }
 .btn-timer-preset:active, .btn-timer-adjust:active { transform: translateY(0); }
+
+/* SHOT CLOCK & ALERTS */
+.shot-clock-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+}
+.shot-clock {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #E74C3C;
+  text-shadow: 0 0 10px rgba(231, 76, 60, 0.4);
+  letter-spacing: 0.05em;
+  line-height: 1;
+  transition: var(--transition);
+}
+.shot-clock.inactive {
+  color: var(--text-muted);
+  text-shadow: none;
+  opacity: 0.5;
+}
+.shot-clock.critical {
+  animation: blink-red 0.5s infinite alternate;
+}
+@keyframes blink-red {
+  from { opacity: 0.4; text-shadow: none; }
+  to { opacity: 1; text-shadow: 0 0 15px rgba(231, 76, 60, 0.8); }
+}
+.shot-clock-controls {
+  display: flex;
+  gap: 6px;
+}
+.btn-shot-ctrl {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #E74C3C;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.btn-shot-ctrl:hover {
+  background: rgba(231, 76, 60, 0.3);
+  color: #fff;
+}
+.btn-shot-ctrl:active {
+  transform: scale(0.95);
+}
+
+.score-timer.timer-critical {
+  color: #E74C3C;
+  background: rgba(231, 76, 60, 0.15);
+  border-color: rgba(231, 76, 60, 0.4);
+  animation: pulse-critical 0.6s infinite alternate;
+}
+@keyframes pulse-critical {
+  from { transform: scale(1); box-shadow: 0 0 5px rgba(231, 76, 60, 0.2); }
+  to { transform: scale(1.05); box-shadow: 0 0 15px rgba(231, 76, 60, 0.6); }
+}
 
 /* ============================================================
    TEAM FOULS & BONUS STATE
