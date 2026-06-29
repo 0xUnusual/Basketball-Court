@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Basketball Court - Gestión de liga de baloncesto. Cola de jugadores, quintetos automáticos y marcador por jugador." />
+  <meta name="description" content="Basketball Court - Gestión de liga de baloncesto. Cola de jugadores, quintetos automáticos, marcador y Box Score de torneo." />
   <title>Basketball Court</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet" />
@@ -40,6 +40,17 @@
           <span class="chip-label">Partidos</span>
           <span class="chip-value" id="hdr-matches">0</span>
         </div>
+
+        <!-- MODE TOGGLE -->
+        <div class="mode-toggle-wrap">
+          <button class="mode-toggle-btn active" id="btn-mode-recreational" data-mode="recreational">
+            <span>🎯</span> Recreativo
+          </button>
+          <button class="mode-toggle-btn" id="btn-mode-tournament" data-mode="tournament">
+            <span>🏆</span> Torneo
+          </button>
+        </div>
+
         <button class="btn-theme-toggle" id="btn-theme-toggle" title="Cambiar tema">
           <span class="theme-icon">☀️</span> <span class="theme-text">Claro</span>
         </button>
@@ -53,7 +64,7 @@
   <!-- MAIN LAYOUT -->
   <main class="main-layout">
 
-    <!-- ====================== PANEL IZQUIERDO: COLA ====================== -->
+    <!-- ====================== PANEL IZQUIERDO: COLA (Modo Recreativo) ====================== -->
     <section class="panel panel-queue active-tab" id="panel-queue" aria-label="Cola de jugadores">
       <div class="panel-header">
         <h2 class="panel-title"><span class="panel-icon">📋</span> Lista de Asistencia</h2>
@@ -99,6 +110,78 @@
       </div>
     </section>
 
+    <!-- ====================== PANEL IZQUIERDO: TORNEO (Modo Torneo) ====================== -->
+    <section class="panel panel-tournament" id="panel-tournament" aria-label="Gestión de equipos del torneo">
+      <div class="panel-header">
+        <h2 class="panel-title"><span class="panel-icon">🏆</span> Torneo</h2>
+      </div>
+
+      <!-- ROSTER EQUIPO A -->
+      <div class="tournament-roster-section roster-a">
+        <div class="roster-header">
+          <div class="roster-title-wrap">
+            <span class="roster-dot dot-a"></span>
+            <input type="text" id="tournament-team-a-name" class="roster-team-name-input" value="Equipo A" maxlength="25" />
+          </div>
+          <button class="btn-export-boxscore btn-export-a" id="btn-export-a" title="Exportar Box Score del Equipo A">
+            📤 Exportar
+          </button>
+        </div>
+        <div class="roster-add-form">
+          <div class="input-group roster-input-group">
+            <input type="number" id="tournament-jersey-a-input" class="player-input jersey-input" placeholder="#" min="0" max="99" />
+            <input type="text" id="tournament-player-a-input" class="player-input player-input-sm" placeholder="Nombre del jugador..." maxlength="30" autocomplete="off" />
+            <button class="btn-add btn-add-sm" id="btn-add-tournament-a" title="Agregar al Equipo A">
+              <span class="btn-add-icon">+</span>
+            </button>
+          </div>
+        </div>
+        <div class="roster-list" id="tournament-roster-a">
+          <div class="roster-empty" id="roster-a-empty">
+            <span class="empty-icon" style="font-size:1.5rem;">🏀</span>
+            <p>Sin jugadores en el Equipo A</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROSTER EQUIPO B -->
+      <div class="tournament-roster-section roster-b">
+        <div class="roster-header">
+          <div class="roster-title-wrap">
+            <span class="roster-dot dot-b"></span>
+            <input type="text" id="tournament-team-b-name" class="roster-team-name-input" value="Equipo B" maxlength="25" />
+          </div>
+          <button class="btn-export-boxscore btn-export-b" id="btn-export-b" title="Exportar Box Score del Equipo B">
+            📤 Exportar
+          </button>
+        </div>
+        <div class="roster-add-form">
+          <div class="input-group roster-input-group">
+            <input type="number" id="tournament-jersey-b-input" class="player-input jersey-input" placeholder="#" min="0" max="99" />
+            <input type="text" id="tournament-player-b-input" class="player-input player-input-sm" placeholder="Nombre del jugador..." maxlength="30" autocomplete="off" />
+            <button class="btn-add btn-add-sm" id="btn-add-tournament-b" title="Agregar al Equipo B">
+              <span class="btn-add-icon">+</span>
+            </button>
+          </div>
+        </div>
+        <div class="roster-list" id="tournament-roster-b">
+          <div class="roster-empty" id="roster-b-empty">
+            <span class="empty-icon" style="font-size:1.5rem;">🏀</span>
+            <p>Sin jugadores en el Equipo B</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón generar partido de torneo -->
+      <div class="generate-section">
+        <button class="btn-generate btn-generate-tournament" id="btn-generate-tournament" disabled>
+          <span class="btn-icon">⚡</span>
+          <span>Iniciar Partido de Torneo</span>
+        </button>
+        <p class="generate-hint" id="generate-tournament-hint">Agrega jugadores a ambos equipos</p>
+      </div>
+    </section>
+
     <!-- ====================== PANEL CENTRAL: CANCHA ====================== -->
     <section class="panel panel-court" id="panel-court" aria-label="Partido en curso">
 
@@ -111,7 +194,7 @@
         </div>
       </div>
 
-      <!-- Estado: partido en curso -->
+      <!-- Estado: partido en curso (Modo Recreativo) -->
       <div class="court-active" id="court-active" style="display:none;">
 
         <!-- Cabecera del partido -->
@@ -231,6 +314,134 @@
 
       </div>
 
+      <!-- ======================== Estado: partido de TORNEO en curso ======================== -->
+      <div class="court-tournament" id="court-tournament" style="display:none;">
+
+        <!-- Cabecera del partido de torneo -->
+        <div class="match-header">
+          <div class="match-meta">
+            <span class="match-label tournament-label">🏆 TORNEO EN CURSO</span>
+            <span class="match-number" id="tournament-match-number">#1</span>
+          </div>
+        </div>
+
+        <!-- SCOREBOARD TORNEO -->
+        <div class="scoreboard scoreboard-tournament">
+          <div class="score-block team-a">
+            <div class="team-name" id="t-score-name-a">Equipo A</div>
+            <div class="score-number" id="t-score-a">0</div>
+          </div>
+          <div class="score-sep">
+            <div class="score-vs">VS</div>
+            <div class="timers-row">
+              <div class="score-timer" id="t-match-timer">00:00</div>
+              <div class="shot-clock-box">
+                <div class="shot-clock" id="t-shot-clock">--</div>
+              </div>
+            </div>
+            <div class="timer-controls">
+              <button class="btn-timer-ctrl" id="t-btn-timer-toggle" title="Iniciar/Pausar Reloj">⏸️ Pausa</button>
+              <button class="btn-timer-ctrl" id="t-btn-timer-reset" title="Reiniciar Reloj">⏱️ Reset</button>
+            </div>
+            <div class="timer-presets">
+              <button class="btn-timer-preset" id="t-btn-preset-10">⏱️ 10m</button>
+              <button class="btn-timer-preset" id="t-btn-preset-12">⏱️ 12m</button>
+              <button class="btn-timer-preset" id="t-btn-preset-1">⏱️ 1m</button>
+              <button class="btn-timer-preset" id="t-btn-preset-10s">⏱️ 10s</button>
+            </div>
+            <div class="controls-adjust-row">
+              <div class="adjust-group">
+                <button class="btn-timer-adjust" id="t-btn-adjust-plus-min">+1m</button>
+                <button class="btn-timer-adjust" id="t-btn-adjust-plus-sec">+10s</button>
+              </div>
+              <div class="shot-group">
+                <button class="btn-shot-ctrl" id="t-btn-shot-24">24s</button>
+                <button class="btn-shot-ctrl" id="t-btn-shot-14">14s</button>
+              </div>
+            </div>
+          </div>
+          <div class="score-block team-b">
+            <div class="team-name" id="t-score-name-b">Equipo B</div>
+            <div class="score-number" id="t-score-b">0</div>
+          </div>
+        </div>
+
+        <!-- BOX SCORE EQUIPO A -->
+        <div class="boxscore-section" id="boxscore-section-a">
+          <div class="boxscore-header">
+            <span class="boxscore-team-tag bst-a" id="bs-team-a-label">📋 Equipo A — Box Score</span>
+            <div class="late-player-form">
+              <input type="number" id="late-jersey-a" class="player-input jersey-input-xs" placeholder="#" min="0" max="99" />
+              <input type="text" id="late-name-a" class="player-input player-input-xs" placeholder="Llegó tarde..." maxlength="30" autocomplete="off" />
+              <button class="btn-add-late" id="btn-add-late-a" title="Agregar jugador tarde">+ Jugador</button>
+            </div>
+          </div>
+          <div class="boxscore-table-wrap">
+            <table class="boxscore-table" id="boxscore-table-a">
+              <thead>
+                <tr>
+                  <th class="bh-player">Jugador</th>
+                  <th class="bh-status">Estado</th>
+                  <th class="bh-stat min-col">MIN</th>
+                  <th class="bh-stat">PTS</th>
+                  <th class="bh-stat">REB</th>
+                  <th class="bh-stat">AST</th>
+                  <th class="bh-stat">ROB</th>
+                  <th class="bh-stat">BLQ</th>
+                  <th class="bh-stat">PER</th>
+                  <th class="bh-stat">FAL</th>
+                  <th class="bh-shots">TIROS (2PT% / 3PT%)</th>
+                </tr>
+              </thead>
+              <tbody id="boxscore-body-a">
+                <!-- generado por JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BOX SCORE EQUIPO B -->
+        <div class="boxscore-section" id="boxscore-section-b">
+          <div class="boxscore-header">
+            <span class="boxscore-team-tag bst-b" id="bs-team-b-label">📋 Equipo B — Box Score</span>
+            <div class="late-player-form">
+              <input type="number" id="late-jersey-b" class="player-input jersey-input-xs" placeholder="#" min="0" max="99" />
+              <input type="text" id="late-name-b" class="player-input player-input-xs" placeholder="Llegó tarde..." maxlength="30" autocomplete="off" />
+              <button class="btn-add-late" id="btn-add-late-b" title="Agregar jugador tarde">+ Jugador</button>
+            </div>
+          </div>
+          <div class="boxscore-table-wrap">
+            <table class="boxscore-table" id="boxscore-table-b">
+              <thead>
+                <tr>
+                  <th class="bh-player">Jugador</th>
+                  <th class="bh-status">Estado</th>
+                  <th class="bh-stat min-col">MIN</th>
+                  <th class="bh-stat">PTS</th>
+                  <th class="bh-stat">REB</th>
+                  <th class="bh-stat">AST</th>
+                  <th class="bh-stat">ROB</th>
+                  <th class="bh-stat">BLQ</th>
+                  <th class="bh-stat">PER</th>
+                  <th class="bh-stat">FAL</th>
+                  <th class="bh-shots">TIROS (2PT% / 3PT%)</th>
+                </tr>
+              </thead>
+              <tbody id="boxscore-body-b">
+                <!-- generado por JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Botón finalizar partido de torneo -->
+        <div class="tournament-end-section">
+          <button class="btn-win btn-win-a" id="t-btn-win-a">🏆 Ganó <span id="t-win-label-a">Equipo A</span></button>
+          <button class="btn-win btn-win-b" id="t-btn-win-b">🏆 Ganó <span id="t-win-label-b">Equipo B</span></button>
+        </div>
+
+      </div>
+
     </section>
 
     <!-- ====================== PANEL DERECHO: HISTORIAL ====================== -->
@@ -267,14 +478,32 @@
     </div>
   </div>
 
+  <!-- MODAL: GANADOR TORNEO -->
+  <div class="modal-overlay" id="tournament-winner-modal" aria-modal="true" role="dialog" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-trophy">🏆</div>
+      <h2 class="modal-title" id="t-modal-winner-name">¡Equipo A Ganó!</h2>
+      <p class="modal-sub" id="t-modal-winner-sub">Partido de torneo finalizado</p>
+      <div class="modal-score-summary" id="t-modal-score-summary"></div>
+      <div class="modal-players" id="t-modal-winner-players"></div>
+      <button class="btn-modal-continue" id="t-btn-modal-close">
+        ✓ Ver resultados
+      </button>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATIONS -->
   <div class="toast-container" id="toast-container"></div>
 
   <!-- MOBILE BOTTOM NAVIGATION -->
   <nav class="mobile-nav" id="mobile-nav">
-    <button class="mobile-nav-btn active" data-target="queue">
+    <button class="mobile-nav-btn active" data-target="queue" id="mobile-nav-queue">
       <span class="nav-icon">📋</span>
       <span class="nav-text">Cola</span>
+    </button>
+    <button class="mobile-nav-btn mobile-nav-tournament" data-target="tournament" id="mobile-nav-tournament" style="display:none;">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-text">Torneo</span>
     </button>
     <button class="mobile-nav-btn" data-target="court">
       <span class="nav-icon">🏀</span>

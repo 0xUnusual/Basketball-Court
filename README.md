@@ -54,6 +54,22 @@ Con una regla clara: **"el equipo ganador se queda en cancha y el perdedor va al
     *   Muestra un registro permanente de todos los partidos completados del día en orden inverso (el más reciente al inicio).
     *   Detalla los marcadores finales, los máximos anotadores (top scorers) de cada partido, la duración del partido y la hora de finalización.
 
+*   **🏆 Modo Torneo & Box Score Detallado:**
+    *   **Rosters de Equipos Independientes**: Apartados separados para dos equipos con nombres totalmente editables directamente en el DOM.
+    *   **Identificación por Camiseta**: Asignación opcional del número de camiseta al agregar jugadores (mostrando un badge `#N`).
+    *   **Registro Tardío**: Formulario rápido "+ Jugador" en el Box Score para dar de alta a jugadores que lleguen tarde.
+    *   **Cálculo de Tiros y Efectividad Separada**: Controles independientes para tiros de 2 puntos (`+2 ✅` / `2PT ❌`) y 3 puntos (`+3 ✅` / `3PT ❌`) con cálculo automático de porcentajes de efectividad en tiempo real (2PT% y 3PT%).
+    *   **Control Preciso de Minutos y Segundos (MM:SS)**: Registro automático del tiempo de juego de cada basquetbolista en base a si está en cancha (`🟢 Cancha`) o banca (`🪑 Banca`).
+    *   **Reloj de Torneo Independiente**: Cronómetro y shot clock específicos para el modo torneo.
+    *   **Exportación Premium (PDF / Impresión)**: Generador interactivo de reportes en HTML con un diseño dark-mode estilizado e impresión adaptada (`@media print` optimizado para PDF) y copiado rápido al portapapeles.
+    *   **Historiales Separados**: Historial limpio que filtra y muestra solo los partidos correspondientes al modo de juego activo.
+
+*   **📱 Diseño 100% Responsivo (Responsive Design):**
+    *   Optimizada para cualquier dispositivo: Teléfonos inteligentes, tablets y computadoras de escritorio.
+    *   **Menú de Navegación Móvil (Bottom Tab Bar)**: En pantallas pequeñas, el diseño se divide en pestañas intuitivas en la parte inferior para alternar de forma fluida entre la lista de espera, el panel de juego (Cancha) y el historial.
+    *   **Tablas Scrollables**: Las amplias tablas del Box Score cuentan con desplazamiento horizontal adaptado a pantallas de móviles para no romper la fluidez del diseño.
+    *   **Ocultación de Paneles Dinámica**: Durante un partido de torneo activo, los paneles laterales se ocultan y la cancha se expande al 100% del ancho para máxima legibilidad.
+
 *   **🌓 Selector de Tema Claro / Oscuro:**
     *   Alterna entre un diseño futurista en modo oscuro con acentos de luces de neón naranja, y un modo claro limpio y estilizado con alta visibilidad al aire libre.
     *   Guarda tu preferencia automáticamente.
@@ -66,8 +82,8 @@ Con una regla clara: **"el equipo ganador se queda en cancha y el perdedor va al
 ## 🛠️ Tecnologías Utilizadas
 
 *   **HTML5:** Estructura semántica moderna.
-*   **Vanilla CSS:** Estilos personalizados avanzados, diseño glassmorphism, variables dinámicas para modo oscuro/claro y micro-animaciones fluidas.
-*   **Vanilla JavaScript (ES6+):** Gestión de estado reactivo y algoritmos de cola sin frameworks ni dependencias externas.
+*   **Vanilla CSS:** Estilos personalizados avanzados, diseño glassmorphism, variables dinámicas para modo oscuro/claro, micro-animaciones fluidas y diseño responsivo adaptado a móviles.
+*   **Vanilla JavaScript (ES6+):** Gestión de estado reactivo, cronómetros individuales paralelos y exportación dinámica.
 
 ---
 
